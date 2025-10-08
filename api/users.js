@@ -26,3 +26,4 @@ router
     const token = await createToken({ id: user.id });
     res.send(token);
   });
+/**Testing of comments */
