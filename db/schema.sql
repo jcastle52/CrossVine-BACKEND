@@ -1,7 +1,6 @@
-DROP TABLE IF EXISTS users_posts;
 DROP TABLE IF EXISTS interactions;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -15,6 +14,7 @@ CREATE TABLE users (
 
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
+  user_owner VARCHAR(100) NOT NULL REFERENCES users(username) ON DELETE CASCADE ON UPDATE CASCADE,
   title VARCHAR(150) NOT NULL,
   description TEXT,
   post_type VARCHAR(100) NOT NULL,
@@ -23,13 +23,6 @@ CREATE TABLE posts (
   dislikes INT DEFAULT 0,
   hashtags VARCHAR(100)[],
   post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE users_posts (
-  id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  UNIQUE (user_id, post_id)
 );
 
 CREATE TABLE interactions (

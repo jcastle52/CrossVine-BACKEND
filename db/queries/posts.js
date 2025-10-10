@@ -19,30 +19,16 @@ export async function getAllPosts() {
     return posts;
 }
 
-export async function createPost(title, description, type, url, hashtags) {
+export async function createPost(username, title, description, type, url, hashtags) {
     const SQL = `
     INSERT INTO posts
-    (title, description, post_type, post_URL, hashtags)
+    (user_owner, title, description, post_type, post_URL, hashtags)
     VALUES
-    ($1, $2, $3, $4, $5)
+    ($1, $2, $3, $4, $5, $6)
     RETURNING *
     `;
     const {
     rows: [post],
-  } = await db.query(SQL, [title, description, type, url, hashtags]);
-  return post;
-}
-
-export async function attachPostToUserId(userId, postId) {
-    const SQL = `
-    INSERT INTO users_posts
-    (user_id, post_id)
-    VALUES
-    ($1, $2)
-    RETURNING *
-    `;
-    const {
-    rows: [post],
-  } = await db.query(SQL, [userId, postId]);
+  } = await db.query(SQL, [username, title, description, type, url, hashtags]);
   return post;
 }
