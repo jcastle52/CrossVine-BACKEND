@@ -1,7 +1,7 @@
 import db from "#db/client";
 import { faker } from "@faker-js/faker";
 import { createUser } from "#db/queries/users";
-import { createPost, attachPostToUserId } from "#db/queries/posts";
+import { createPost } from "#db/queries/posts";
 
 await db.connect();
 await seed();
@@ -25,8 +25,7 @@ async function seed() {
       const url = null;
       const hashtags = [("#" + faker.word.words(1)),("#" + faker.word.words(1))];
 
-      const post = await createPost(title, description, type, url, hashtags);
-      await attachPostToUserId(user.id, post.id);
+      const post = await createPost(user.username, title, description, type, url, hashtags);
     }
   }
 }

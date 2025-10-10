@@ -6,7 +6,6 @@ import {
   getAllPosts,
   getPostById,
   createPost,
-  attachPostToUserId,
 } from "#db/queries/posts";
 
 import requireBody from "#middleware/requireBody";
@@ -46,6 +45,7 @@ router
       }
 
       const post = await createPost(
+        req.user.username,
         title,
         description,
         type,
@@ -53,7 +53,6 @@ router
         hashtags
       );
       if (!post) return res.status(401).send("Womp Womp");
-      const attachedPost = await attachPostToUserId(req.user.id, post.id);
       res.status(201).send(attachedPost);
     } catch (error) {
       res.status(400).send(error);
