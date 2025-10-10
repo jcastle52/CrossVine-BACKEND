@@ -6,10 +6,12 @@ import {
   getAllPosts,
   getPostById,
   createPost,
+  deletePost,
 } from "#db/queries/posts";
 
 import requireBody from "#middleware/requireBody";
 import requireUser from "#middleware/requireUser";
+import handleUrl from "#api/functions/handleUrl";
 
 router
   .route("/")
@@ -25,47 +27,48 @@ router
     try {
       const { title, description, type, url, hashtags } = req.body;
       const allowedTypes = ["Text", "Image", "YouTube"];
-      if (!allowedTypes.includes(type))
-        return res
-          .status(400)
-          .send("invalid type. Examples of types: " + allowedTypes);
+      if (!allowedTypes.includes(type)) return res.status(400).send("invalid type. Examples of types: " + allowedTypes);
 
-      let revisedUrl = url;
-      if (type === "YouTube") {
-        const startSting = "https://www.youtube.com/watch?v=";
-        const startSting2 = "https://youtu.be/";
-        const attachString = "https://www.youtube.com/embed/";
-        if (url.startsWith(startSting, 0)) {
-          const vidId = url.substr(32, 11);
-          revisedUrl = attachString + vidId;
-        } else if (url.startsWith(startSting2, 0)) {
-          const vidId = url.substr(17, 11);
-          revisedUrl = attachString + vidId;
-        } else console.log("no");
-      }
+      const checkUrl = handleUrl(type, url);
+      if (checkUrl.error) return res.status(400).send(checkUrl.error);
 
       const post = await createPost(
         req.user.username,
         title,
         description,
         type,
-        revisedUrl,
+        checkUrl.revisedUrl,
         hashtags
       );
       if (!post) return res.status(401).send("Womp Womp");
-      res.status(201).send(attachedPost);
+      res.status(201).send(post);
     } catch (error) {
       res.status(400).send(error);
     }
   });
 
-router.route("/:id").get(async (req, res) => {
-  try {
-    const id = req.params.id;
-    const post = await getPostById(id);
-    if (!post) return res.status(404).send("Post Not Found");
-    res.status(201).send(post);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
+router
+  .route("/:id")
+  .get(async (req, res) => {
+    try {
+      const id = req.params.id;
+      const post = await getPostById(id);
+      if (!post) return res.status(404).send("Post Does Not Exist");
+      res.status(201).send(post);
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  })
+  .delete(requireUser, async (req, res) => {
+    try {
+      const id = req.params.id;
+      const post = await getPostById(id);
+      if (!post) return res.status(404).send("Post Does Not Exist");
+      if (post.user_owner !== req.user.username) return res.status(401).send("You Do Not Own This Post");
+
+      await deletePost(id, req.user.username);
+      res.status(201).send("Post Deleted");
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  });
