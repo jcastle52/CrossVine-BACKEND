@@ -4,6 +4,7 @@ export default app;
 
 import usersRouter from "#api/users";
 import postsRouter from "#api/posts";
+import searchRouter from "#api/search";
 import getUserFromToken from "#middleware/getUserFromToken";
 import handlePostgresErrors from "#middleware/handlePostgresErrors";
 import cors from "cors";
@@ -22,6 +23,7 @@ app.get("/", (req, res) => res.send("Hello, World!"));
 
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
+app.use("/search", searchRouter);
 
 app.use(handlePostgresErrors);
 app.use((err, req, res, next) => {
