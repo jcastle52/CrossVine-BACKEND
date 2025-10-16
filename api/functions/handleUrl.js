@@ -1,3 +1,4 @@
+/* This function take a post type and deternmines what the url that should be stored in the database*/
 export default function handleUrl(type, url) {
     const checkUrl = {
         revisedUrl: url,
@@ -8,11 +9,7 @@ export default function handleUrl(type, url) {
         checkUrl.revisedUrl = null
         return checkUrl;
     }
-    
-    if (type === "Image") {
-        return checkUrl;
-    }
-
+    if (type === "Image") return checkUrl;
     if (type === "YouTube") {
         const startSting = "https://www.youtube.com/watch?v=";
         const startSting2 = "https://youtu.be/";

@@ -61,12 +61,12 @@ router
   })
   .delete(requireUser, async (req, res) => {
     try {
-      const id = req.params.id;
-      const post = await getPostById(id);
+      const postId = req.params.id;
+      const post = await getPostById(postId);
       if (!post) return res.status(404).send("Post Does Not Exist");
-      if (post.user_owner !== req.user.username) return res.status(401).send("You Do Not Own This Post");
+      if (post.user_owner !== req.user.username) return res.status(403).send("You Do Not Own This Post");
 
-      await deletePost(id, req.user.username);
+      await deletePost(postId, req.user.username);
       res.status(201).send("Post Deleted");
     } catch (error) {
       res.status(400).send(error);

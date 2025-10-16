@@ -1,6 +1,7 @@
 import db from "#db/client";
 import bcrypt from "bcrypt";
 
+/* Creates a user from a username and password*/
 export async function createUser(username, password) {
   const sql = `
   INSERT INTO users
@@ -16,7 +17,8 @@ export async function createUser(username, password) {
   return user;
 }
 
-export async function getUserByUsernameAndPassword(username, password) {
+/* Used to login using the */
+export async function loginUser(username, password) {
   const sql = `
   SELECT *
   FROM users
@@ -25,7 +27,6 @@ export async function getUserByUsernameAndPassword(username, password) {
   const {
     rows: [user],
   } = await db.query(sql, [username]);
-  if (!user) return null;
 
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) return null;
@@ -42,5 +43,17 @@ export async function getUserById(id) {
   const {
     rows: [user],
   } = await db.query(sql, [id]);
+  return user;
+}
+
+export async function getUserByUsername(username) {
+  const SQL = `
+  SELECT *
+  FROM users
+  WHERE username = $1
+  `;
+  const {
+    rows: [user],
+  } = await db.query(SQL, [username]);
   return user;
 }

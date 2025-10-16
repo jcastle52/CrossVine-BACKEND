@@ -3,8 +3,8 @@ const router = express.Router();
 export default router;
 
 import { searchRequest } from "#db/queries/search";
-
 import requireBody from "#middleware/requireBody";
+
 router
     .route("/")
     .post(requireBody(["search"]), async (req, res) => {

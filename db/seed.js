@@ -8,6 +8,7 @@ await seed();
 await db.end();
 console.log("🌱 Database seeded.");
 
+/* seeds the database */
 async function seed() {
   await createUser("JasiUser", "Password123");
   await createUser("HectorUser", "Password123");
@@ -24,8 +25,7 @@ async function seed() {
       const type = "Text";
       const url = null;
       const hashtags = [("#" + faker.word.words(1)),("#" + faker.word.words(1))];
-
-      const post = await createPost(user.username, title, description, type, url, hashtags);
+      await createPost(user.username, title, description, type, url, hashtags);
     }
   }
 }
