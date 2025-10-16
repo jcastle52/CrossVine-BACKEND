@@ -1,5 +1,9 @@
 import db from "#db/client";
 
+/* gets posts based off of a search string. 
+Each word in the string is search for in all posts title's.
+data, type, approval are extra filters.
+*/
 export async function searchRequest(date, approval, type, search) {
   let sqlOrderString = "";
   let sqlTypeString = "";

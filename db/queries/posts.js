@@ -1,5 +1,6 @@
 import db from "#db/client";
 
+/* Gets a post by id */
 export async function getPostById(id) {
   const SQL = `
     SELECT * FROM posts
@@ -11,6 +12,7 @@ export async function getPostById(id) {
   return post;
 }
 
+/* Gets all posts */
 export async function getAllPosts() {
   const SQL = `
     SELECT * FROM posts
@@ -19,6 +21,7 @@ export async function getAllPosts() {
   return posts;
 }
 
+/* Creates a post given, username, title, and type. Description, url, hashtags are optional */
 export async function createPost(
   username,
   title,
@@ -40,7 +43,8 @@ export async function createPost(
   return post;
 }
 
-export async function getAllUserPosts() {
+/* Gets all posts owned by a specific user */
+export async function getAllPostsByUsername(username) {
   const SQL = `
     SELECT * FROM posts
     WHERE user_owner = $1
@@ -49,6 +53,7 @@ export async function getAllUserPosts() {
   return posts;
 }
 
+/* Deletes a post given the postId and the username(gets this from the token)*/
 export async function deletePost(postId, username) {
   const SQL = `
   DELETE FROM posts
