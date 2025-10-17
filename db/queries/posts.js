@@ -48,6 +48,7 @@ export async function getAllPostsByUsername(username) {
   const SQL = `
     SELECT * FROM posts
     WHERE user_owner = $1
+    ORDER BY post_date DESC
     `;
   const { rows: posts } = await db.query(SQL, [username]);
   return posts;
