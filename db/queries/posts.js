@@ -43,17 +43,6 @@ export async function createPost(
   return post;
 }
 
-/* Gets all posts owned by a specific user */
-export async function getAllPostsByUsername(username) {
-  const SQL = `
-    SELECT * FROM posts
-    WHERE user_owner = $1
-    ORDER BY post_date DESC
-    `;
-  const { rows: posts } = await db.query(SQL, [username]);
-  return posts;
-}
-
 /* Deletes a post given the postId and the username(gets this from the token)*/
 export async function deletePost(postId, username) {
   const SQL = `
@@ -65,3 +54,16 @@ export async function deletePost(postId, username) {
   } = await db.query(SQL, [postId, username]);
   return post;
 }
+
+/* Gets all posts owned by a specific user */
+export async function getAllPostsByUsername(username) {
+  const SQL = `
+    SELECT * FROM posts
+    WHERE user_owner = $1
+    ORDER BY post_date DESC
+    `;
+  const { rows: posts } = await db.query(SQL, [username]);
+  return posts;
+}
+
+
