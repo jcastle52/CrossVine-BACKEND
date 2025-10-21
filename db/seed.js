@@ -10,9 +10,8 @@ console.log("🌱 Database seeded.");
 
 /* seeds the database */
 async function seed() {
-  await createUser("JasiUser", "Password123");
-  await createUser("HectorUser", "Password123");
-  await createUser("CodyUser", "Password123");
+  await createUser("JasiUser", "Password123", "Jasiel Castillo", "https://www.shipducky.com/cdn/shop/products/Instagrampost-1a.jpg?v=1660097941&width=1445", "This is my bio, blablablabla");
+  await createUser("CodyUser", "Password123", "Cody Jones");
 
   for (let i = 1; i <= 50; i++) {
     const userName = faker.internet.username();

@@ -2,7 +2,7 @@ import db from "#db/client";
 import bcrypt from "bcrypt";
 
 /* Creates a user from a username and password*/
-export async function createUser(username, password, fullname, profileImage, bio) {
+export async function createUser(username, password, profileName, profileImage, bio) {
   const sql = `
   INSERT INTO users
     (username, password, profile_name, thumbnail_url, bio)
@@ -13,7 +13,7 @@ export async function createUser(username, password, fullname, profileImage, bio
   const hashedPassword = await bcrypt.hash(password, 10);
   const {
     rows: [user],
-  } = await db.query(sql, [username, hashedPassword, fullname, profileImage, bio]);
+  } = await db.query(sql, [username, hashedPassword, profileName, profileImage, bio]);
   return user;
 }
 
@@ -36,7 +36,7 @@ export async function loginUser(username, password) {
 
 export async function getUserById(id) {
   const sql = `
-  SELECT *
+  SELECT id, username, profile_name, bio, thumbnail_url, saved_hashtags
   FROM users
   WHERE id = $1
   `;
@@ -58,37 +58,15 @@ export async function getUserByUsername(username) {
   return user;
 }
 
-export async function getUserSavedHashtags(id) {
-  const SQL = `
-  SELECT saved_hashtags
-  FROM users
-  WHERE id = $1
-  `;
-  const { rows: [hashtags] } = await db.query(SQL, [id]);
-  return hashtags.saved_hashtags;
-}
-
-export async function saveHashtag(id, hashtag) {
+export async function updateUser(id, profileName, profileImage, bio) {
   const SQL = `
   UPDATE users
-  SET saved_hashtags = ARRAY_APPEND(saved_hashtags, $2)
+  SET profile_name = $2, thumbnail_url = $3, bio = $4
   WHERE id = $1
-  RETURNING saved_hashtags
+  RETURNING username, profile_name, bio, thumbnail_url
   `;
   const {
-    rows: [tags],
-  } = await db.query(SQL, [id, hashtag]);
-  return tags.saved_hashtags;
-}
-
-export async function findHashtag(id, hashtag) {
-  const SQL = `
-  SELECT saved_hashtags
-  FROM users
-  WHERE id = $1 AND $2 = ANY(saved_hashtags)
-  `;
-  const {
-    rows: [tag],
-  } = await db.query(SQL, [id, hashtag]);
-  return tag;
+    rows: [user],
+  } = await db.query(SQL, [id, profileName, profileImage, bio]);
+  return user;
 }
