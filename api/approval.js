@@ -43,12 +43,9 @@ router
       if (!userApproval) return res.status(400).send("Could not approve post");
 
       if (approval === true) {
-        console.log("test")
         await likePost(postId, 1);
-        console.log("liked")
       } else {
         await dislikePost(postId, 1);
-        console.log("disliked")
       }
 
       res.status(201).send(userApproval);
@@ -68,7 +65,7 @@ router
           .status(404)
           .send("interaction does not exists, try creating it");
 
-          if (approval === checkIfExists.approval) return res.status(400).send(`User already approved as ${approval}`);
+          if (approval === checkIfExists.approve) return res.status(400).send(`User already approved as ${approval}`);
       const userApproval = await updateApproval(userId, postId, approval);
       if (!userApproval)
         return res.status(400).send("Could not update approval");
@@ -76,11 +73,9 @@ router
     if (approval === true) {
         await likePost(postId, 1);
         await dislikePost(postId, -1);
-        console.log("liked")
       } else {
         await dislikePost(postId, 1);
         await likePost(postId, -1);
-        console.log("disliked")
       }
 
       res.status(201).send(userApproval);
@@ -96,8 +91,7 @@ router
       if (!checkIfExists)
         return res.status(404).send("interaction does not exists");
       await deleteApproval(userId, postId);
-
-        if (checkIfExists.approval === true) {
+        if (checkIfExists.approve === true) {
             await likePost(postId, -1);
         } else {
             await dislikePost(postId,-1);

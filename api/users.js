@@ -65,7 +65,7 @@ router.route("/profile")
     res.status(400).send(error);
   }
 })
-.put(requireUser,requireBody(["profileName", "profileImage", "bio"]), async (req, res) => {
+.put(requireUser, requireBody(["profileName", "profileImage", "bio"]), async (req, res) => {
   try {
     const { profileName, profileImage, bio } = req.body;
     const response = await updateUser(req.user.id, profileName, profileImage, bio);
