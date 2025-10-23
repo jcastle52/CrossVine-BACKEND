@@ -9,7 +9,7 @@ CREATE TABLE users (
   password VARCHAR(200) NOT NULL,
   profile_name VARCHAR(100),
   bio VARCHAR(500),
-  thumbnail_url TEXT DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+  thumbnail_url TEXT,
   saved_hashtags VARCHAR(100)[]
 );
 
@@ -38,6 +38,6 @@ CREATE TABLE interactions (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
   post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  approve BOOLEAN DEFAULT NULL,
+  approve BOOLEAN NOT NULL,
   UNIQUE(user_id, post_id)
 );

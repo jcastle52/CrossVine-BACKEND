@@ -6,6 +6,8 @@ import usersRouter from "#api/users";
 import postsRouter from "#api/posts";
 import searchRouter from "#api/search";
 import hashtagsRouter from "#api/hashtags";
+import approvalsRouter from "#api/approval";
+import commentsRouter from "#api/comments";
 import getUserFromToken from "#middleware/getUserFromToken";
 import handlePostgresErrors from "#middleware/handlePostgresErrors";
 import cors from "cors";
@@ -22,6 +24,8 @@ app.use(getUserFromToken);
 
 app.get("/", (req, res) => res.send("Hello, World!"));
 
+app.use("/comments", commentsRouter)
+app.use("/approvals", approvalsRouter);
 app.use("/hashtags", hashtagsRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);

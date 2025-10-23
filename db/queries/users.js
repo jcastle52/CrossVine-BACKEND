@@ -34,21 +34,31 @@ export async function loginUser(username, password) {
   return user;
 }
 
-export async function getUserById(id) {
+export async function getUserById(id, username) {
   const sql = `
-  SELECT id, username, profile_name, bio, thumbnail_url, saved_hashtags
+  SELECT id, username, profile_name, bio, thumbnail_url, saved_hashtags,
+  (
+    SELECT json_agg(posts)
+    FROM posts
+    WHERE user_owner = $2
+  ) as posts
   FROM users
   WHERE id = $1
   `;
   const {
     rows: [user],
-  } = await db.query(sql, [id]);
+  } = await db.query(sql, [id, username]);
   return user;
 }
 
 export async function getUserByUsername(username) {
   const SQL = `
-  SELECT username, profile_name, bio, thumbnail_url
+  SELECT username, profile_name, bio, thumbnail_url,
+  (
+    SELECT json_agg(posts)
+    FROM posts
+    WHERE user_owner = $1
+  ) as posts
   FROM users
   WHERE username = $1
   `;

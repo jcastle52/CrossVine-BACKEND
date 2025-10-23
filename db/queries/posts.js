@@ -16,9 +16,12 @@ export async function getPostById(id) {
 export async function getAllPosts() {
   const SQL = `
     SELECT * FROM posts
+    ORDER BY post_date DESC
     `;
   const { rows: posts } = await db.query(SQL);
   return posts;
+  //LIMIT 100
+  //OFFSET 0
 }
 
 /* Creates a post given, username, title, and type. Description, url, hashtags are optional */
