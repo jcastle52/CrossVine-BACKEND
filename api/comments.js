@@ -30,6 +30,7 @@ router
       const username = req.user.username;
       const postId = req.params.postId;
       const { comment } = req.body;
+      if (comment.length === 0) return res.status(400).send("Comment cannot be 0 characters long");
       const response = await createComment(username, postId, comment);
       if (!response) return res.status(400).send("something went wrong");
       res.status(200).send(response);
@@ -66,6 +67,8 @@ router.route("/:id").get(async (req, res) => {
     try {
     const id = req.params.id;
     const username = req.user.username
+    const response = await getComment(id);
+    if (!response) return res.status(400).send("something went wrong");
     await deleteComment(id, username);
     res.status(200).send("deleted");
   } catch (error) {

@@ -8,21 +8,31 @@ export async function searchRequest(date, approval, type, search) {
   let sqlOrderString = "";
   let sqlTypeString = "";
   let sqlSearchString = "";
-  const searchArr = search.split(" ");
 
-  for (let i = 0; i < searchArr.length; i++) {
-    if (searchArr[i].startsWith("#")) {
-      sqlSearchString = sqlSearchString + `'${searchArr[i]}' = ANY(hashtags)`;
-    } else {
-      sqlSearchString = sqlSearchString + `title ILIKE '%${searchArr[i]}%'`;
-    }
-    if (i + 1 < searchArr.length) {
-      sqlSearchString = sqlSearchString + " OR ";
-    }
-  }
+  if (search) {
+    const searchArr = search.split(" ");
+    sqlSearchString = "WHERE "
 
-  if (type) {
-    sqlTypeString = ` AND post_type = '${type}'`;
+    if (type) {
+      sqlTypeString = ` AND post_type = '${type}'`;
+    }
+
+    for (let i = 0; i < searchArr.length; i++) {
+      if (searchArr[i].startsWith("#")) {
+        sqlSearchString = sqlSearchString + `'${searchArr[i]}' = ANY(hashtags)`;
+      } else {
+        sqlSearchString = sqlSearchString + `title ILIKE '%${searchArr[i]}%'`;
+      }
+      if (i + 1 < searchArr.length) {
+        sqlSearchString = sqlSearchString + " OR ";
+      }
+    }
+
+  } else {
+    sqlSearchString = "";
+    if (type) {
+      sqlTypeString = `WHERE post_type = '${type}'`;
+    }
   }
 
   if (date && approval) {
@@ -52,10 +62,9 @@ export async function searchRequest(date, approval, type, search) {
   }
   const SQL = `
     SELECT * FROM posts
-    WHERE ${sqlSearchString} ${sqlTypeString}
+    ${sqlSearchString} ${sqlTypeString}
     ${sqlOrderString}
     `;
-
   const { rows: posts } = await db.query(SQL);
   return posts;
 }
