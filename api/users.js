@@ -58,7 +58,6 @@ router
 router.route("/profile")
 .get(requireUser, async (req, res) => {
   try {
-    console.log("test")
     const user = await getUserById(req.user.id, req.user.username);
     res.status(200).send(user);
   } catch (error) {

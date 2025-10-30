@@ -2,8 +2,10 @@ import db from "#db/client";
 
 export async function getApproval(userId, postId) {
   const SQL = `
-    SELECT * FROM interactions
-    WHERE user_id = $1 AND post_id = $2
+    SELECT interactions.*, posts.likes, posts.dislikes
+    FROM interactions
+    JOIN posts ON interactions.post_id = posts.id
+    WHERE interactions.user_id = $1 AND interactions.post_id = $2
     `;
   const {
     rows: [approval],
