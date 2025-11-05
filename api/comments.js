@@ -2,6 +2,8 @@ import express from "express";
 const router = express.Router();
 export default router;
 
+import { getPostById } from "#db/queries/posts";
+
 import {
   createComment,
   getComments,
@@ -18,8 +20,12 @@ router
   .get(async (req, res) => {
     try {
       const postId = req.params.postId;
+
+      const post = await getPostById(postId);
+      if (!post) return res.status(404).send({error: "Post not found"});
+
       const comments = await getComments(postId);
-      if (!comments) return res.status(400).send("no comments exist");
+      if (!comments) return res.status(400).send({error: "no comments exist"});
       res.status(200).send(comments);
     } catch (error) {
       res.status(400).send(error);
@@ -29,10 +35,16 @@ router
     try {
       const username = req.user.username;
       const postId = req.params.postId;
+
+      const post = await getPostById(postId);
+      if (!post) return res.status(404).send({error: "Post not found"});
+
       const { comment } = req.body;
-      if (comment.length === 0) return res.status(400).send("Comment cannot be 0 characters long");
+      if (comment.length === 0) return res.status(400).send({error: "Comment cannot be 0 characters long"});
+
       const response = await createComment(username, postId, comment);
-      if (!response) return res.status(400).send("something went wrong");
+      if (!response) return res.status(400).send({error: "Could not create comment"});
+      
       res.status(200).send(response);
     } catch (error) {
       res.status(400).send(error);
@@ -45,8 +57,12 @@ router
     try {
       const postId = req.params.postId;
       const username = req.user.username;
+
+      const post = await getPostById(postId);
+      if (!post) return res.status(404).send({error: "Post not found"});
+
       const comments = await getUserComments(username, postId);
-      if (!comments) return res.status(400).send("no comments exist");
+      if (!comments) return res.status(400).send({error: "No comments exist"});
       res.status(200).send(comments);
     } catch (error) {
       res.status(400).send(error);
@@ -57,7 +73,7 @@ router.route("/:id").get(async (req, res) => {
   try {
     const id = req.params.id;
     const response = await getComment(id);
-    if (!response) return res.status(400).send("something went wrong");
+    if (!response) return res.status(404).send({error: "Comment not found"});
     res.status(200).send(response);
   } catch (error) {
     res.status(400).send(error);
@@ -68,9 +84,9 @@ router.route("/:id").get(async (req, res) => {
     const id = req.params.id;
     const username = req.user.username
     const response = await getComment(id);
-    if (!response) return res.status(400).send("something went wrong");
+    if (!response) return res.status(404).send({error: "Comment not found"});
     await deleteComment(id, username);
-    res.status(200).send("deleted");
+    res.status(204).send("Comment deleted");
   } catch (error) {
     res.status(400).send(error);
   }

@@ -27,10 +27,21 @@ router
     try {
       const { title, description, type, url, hashtags } = req.body;
       const allowedTypes = ["Text", "Image", "YouTube"];
-      if (!allowedTypes.includes(type)) return res.status(400).send("invalid type. Examples of types: " + allowedTypes);
+      if (!allowedTypes.includes(type)) return res.status(400).send({error: "invalid type. Examples of types: " + allowedTypes});
 
       const checkUrl = handleUrl(type, url);
-      if (checkUrl.error) return res.status(400).send(checkUrl.error);
+      if (checkUrl.error) return res.status(400).send({error: checkUrl.error});
+
+      if (type === "Text" && !description) return res.status(400).send({error: "Text posts need a description"});
+     
+      if (hashtags && hashtags.length > 0) {
+        if (hashtags.length > 5) return res.status(400).send({error: "Maximum 5 hashtags per post"})
+
+        for (const hashtag of hashtags) {
+          if (!hashtag.startsWith("#"))
+        return res.status(400).send({error: "Hashtags need to start with #"});
+        }
+      }
 
       const post = await createPost(
         req.user.username,
@@ -40,7 +51,8 @@ router
         checkUrl.revisedUrl,
         hashtags
       );
-      if (!post) return res.status(401).send("Womp Womp");
+
+      if (!post) return res.status(400).send({error: "Could not create post"});
       res.status(201).send(post);
     } catch (error) {
       res.status(400).send(error);
@@ -53,7 +65,7 @@ router
     try {
       const id = req.params.id;
       const post = await getPostById(id);
-      if (!post) return res.status(404).send("Post Does Not Exist");
+      if (!post) return res.status(404).send({error: "Post does not exist"});
       res.status(201).send(post);
     } catch (error) {
       res.status(400).send(error);
@@ -63,11 +75,11 @@ router
     try {
       const postId = req.params.id;
       const post = await getPostById(postId);
-      if (!post) return res.status(404).send("Post Does Not Exist");
-      if (post.user_owner !== req.user.username) return res.status(403).send("You Do Not Own This Post");
+      if (!post) return res.status(404).send({error: "Post does not exist"});
+      if (post.user_owner !== req.user.username) return res.status(403).send({error: "You do not own this Post"});
 
       await deletePost(postId, req.user.username);
-      res.status(201).send("Post Deleted");
+      res.status(204).send("Post Deleted");
     } catch (error) {
       res.status(400).send(error);
     }

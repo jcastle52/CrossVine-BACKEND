@@ -82,7 +82,7 @@ router
       const userId = req.user.id;
       const checkIfExists = await getApproval(userId, postId);
       if (!checkIfExists)
-        return res.status(404).send("interaction does not exists");
+        return res.status(404).send({error: "interaction does not exists"});
       await deleteApproval(userId, postId);
       if (checkIfExists.approve === true) {
         await likePost(postId, -1);
@@ -90,7 +90,7 @@ router
         await dislikePost(postId, -1);
       }
 
-      res.status(200).send("interaction removed");
+      res.status(200).send({error: "interaction removed"});
     } catch (error) {
       res.status(400).send(error);
     }
