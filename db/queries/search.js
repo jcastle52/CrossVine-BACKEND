@@ -43,9 +43,9 @@ export async function searchRequest(date, approval, type, search) {
     }
 
     if (approval === "Likes") {
-      sqlOrderString = sqlOrderString + ", likes ASC";
+      sqlOrderString = sqlOrderString + ", likes DESC";
     } else if (approval === "Dislikes") {
-      sqlOrderString = sqlOrderString + ", dislikes ASC";
+      sqlOrderString = sqlOrderString + ", dislikes DESC";
     }
   } else if (date) {
     if (date === "Newest") {
@@ -55,9 +55,9 @@ export async function searchRequest(date, approval, type, search) {
     }
   } else if (approval) {
     if (approval === "Likes") {
-      sqlOrderString = sqlOrderString + "ORDER BY likes ASC";
+      sqlOrderString = sqlOrderString + "ORDER BY likes DESC";
     } else if (approval === "Dislikes") {
-      sqlOrderString = sqlOrderString + "ORDER BY dislikes ASC";
+      sqlOrderString = sqlOrderString + "ORDER BY dislikes DESC";
     }
   }
   const SQL = `
